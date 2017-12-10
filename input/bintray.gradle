@@ -16,16 +16,13 @@ group = "com.hxw.input"// 这里是groupId ,必须填写  一般填你唯一的�
 //这里是读取Bintray相关的信息，我们上传项目到github上的时候会把gradle文件传上去，
 //所以不要把帐号密码的信息直接写在这里，写在local.properties中，这里动态读取。
 Properties properties = new Properties()
-boolean isHasFile = false
-if (project.rootProject.findProject('local.properties') != null) {
-    isHasFile = true
-    properties.load(project.rootProject.file('local.properties').newDataInputStream())
-}
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 bintray {
     //读取 local.properties 文件里面的 bintray.user
-    user = isHasFile ? properties.getProperty("bintray.user") : System.getenv("bintray_user")
+    user = properties.getProperty("bintray.user")
     //读取 local.properties 文件里面的 bintray.apikey
-    key = isHasFile ? properties.getProperty("bintray.apikey") : System.getenv("bintray_apikey")
+    key =properties.getProperty("bintray.apikey")
 
     pkg {
         userOrg = 'huxiaowei008'//发布到JCenter的组织
