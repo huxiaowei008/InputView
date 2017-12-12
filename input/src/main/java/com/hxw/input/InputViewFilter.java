@@ -15,6 +15,9 @@ import android.text.Spanned;
 
 public class InputViewFilter implements InputFilter {
 
+    /**
+     * 字符的范围
+     */
     private char[] mAccepted;
 
     public InputViewFilter(@NonNull String accepted) {
@@ -22,12 +25,23 @@ public class InputViewFilter implements InputFilter {
         accepted.getChars(0, accepted.length(), mAccepted, 0);
     }
 
+    /**
+     * 过滤操作
+     *
+     * @param source 变化的字符串
+     * @param start  变化字符的首字符下标
+     * @param end    变化字符的尾字符下
+     * @param dest   带光标的字符串
+     * @param dstart 光标的起始位置
+     * @param dend   光标的结束位置
+     * @return
+     */
     @Override
     public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
 
         SpannableStringBuilder filtered =
                 new SpannableStringBuilder(source, start, end);
-        //从后往前历遍对比
+        //从后往前历遍对比，
         for (int j = end - 1; j >= start; j--) {
             if (!ok(mAccepted, source.charAt(j))) {
                 filtered.delete(j, j + 1);

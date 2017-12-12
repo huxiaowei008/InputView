@@ -4,6 +4,9 @@ import android.view.KeyEvent;
 import android.view.inputmethod.BaseInputConnection;
 
 /**
+ * InputConnection接口是接收输入的应用程序与InputMethod间的通讯通道。
+ * 它可以完成以下功能,如读取光标周围的文本,向文本框提交文本,向应用程序提交原始按键事件。
+ *
  * @author hxw
  * @date 2017/12/5
  */

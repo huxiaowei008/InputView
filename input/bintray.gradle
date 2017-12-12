@@ -26,9 +26,7 @@ bintray {
 
     pkg {
         userOrg = 'huxiaowei008'//发布到JCenter的组织
-
         repo = 'maven'//发布到JCenter上的仓库名称
-
         name = projectName//发布到JCenter上的项目名字
         websiteUrl = siteUrl
         vcsUrl = gitUrl

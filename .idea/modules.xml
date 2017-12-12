@@ -2,9 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/InputView.iml" filepath="$PROJECT_DIR$/InputView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/InputView.iml" filepath="$PROJECT_DIR$/.idea/InputView.iml" />
+      <module fileurl="file://F:\hxw\InputView\InputView.iml" filepath="F:\hxw\InputView\InputView.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://F:\hxw\InputView\app\app.iml" filepath="F:\hxw\InputView\app\app.iml" />
       <module fileurl="file://$PROJECT_DIR$/input/input.iml" filepath="$PROJECT_DIR$/input/input.iml" />
+      <module fileurl="file://F:\hxw\InputView\input\input.iml" filepath="F:\hxw\InputView\input\input.iml" />
     </modules>
   </component>
 </project>
