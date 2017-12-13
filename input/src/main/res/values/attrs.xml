@@ -6,7 +6,7 @@
         <attr name="textBackgroundSelected" format="reference" />
         <attr name="maxLength" format="integer" />
         <attr name="boxMargin" format="dimension" />
-        <attr name="isConnect" format="boolean" />
+        <attr name="isPassword" format="boolean" />
         <attr name="strokeWidth" format="dimension" />
         <attr name="lineColor" format="reference|color" />
         <attr name="radius" format="dimension" />

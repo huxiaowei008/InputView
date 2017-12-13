@@ -41,7 +41,7 @@ public class InputViewFilter implements InputFilter {
 
         SpannableStringBuilder filtered =
                 new SpannableStringBuilder(source, start, end);
-        //从后往前历遍对比，
+        //从后往前历遍对比,删除不在限制范围内的字符
         for (int j = end - 1; j >= start; j--) {
             if (!ok(mAccepted, source.charAt(j))) {
                 filtered.delete(j, j + 1);
@@ -51,8 +51,8 @@ public class InputViewFilter implements InputFilter {
     }
 
     /**
-     * @param accept
-     * @param c
+     * @param accept 字符的范围
+     * @param c      对比的字符
      * @return true:符合  false:不符合
      */
     private static boolean ok(char[] accept, char c) {

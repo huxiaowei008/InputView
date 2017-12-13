@@ -5,11 +5,9 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -17,7 +15,6 @@ import android.text.SpannedString;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -36,32 +33,39 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 public class InputView extends View {
 
     private static final Spanned EMPTY_SPANNED = new SpannedString("");
-
+    private static String DOT = String.valueOf('\u2022');
     private Context mContext;
+    //文本的颜色
     private ColorStateList textColor;
+    //划线时线的颜色
     private ColorStateList lineColor;
-
-    private int maxLength;//最大字符数
-    private int boxMargin; //字符方块的margin
+    //最大字符数
+    private int maxLength;
+    //字符方块的margin
+    private int boxMargin;
 
     private TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    //用于画线的画笔
     private Paint paint;
+    //画线模式时的整个方框
     private RectF rectF;
+    //画线时线的粗细
     private int strokeWidth;
-    private int radius;//圆角矩形的圆角度
+    //圆角矩形的圆角度
+    private int radius;
 
 
     private Drawable backgroundDrawable;
     private Drawable backgroundSelectedDrawable;
-    private boolean isConnect;
-
-    private int cursorPosition;//画图光标的位置,不是text内部的光标
+    private boolean isPassword;
+    //画图光标的位置,不是text内部的光标
+    private int cursorPosition;
     private String[] textArray;
     private int boxWidth;
-
-    private InputMethodManager imm;//软键盘
-
-    private InputFilter mFilter;//过滤器
+    //软键盘
+    private InputMethodManager imm;
+    //过滤器
+    private InputFilter mFilter;
 
     public InputView(Context context) {
         this(context, null);
@@ -88,7 +92,7 @@ public class InputView extends View {
             backgroundSelectedDrawable = a.getDrawable(R.styleable.InputView_textBackgroundSelected);
             maxLength = a.getInt(R.styleable.InputView_maxLength, 4);
             boxMargin = a.getDimensionPixelOffset(R.styleable.InputView_boxMargin, dp2px(mContext, 4));
-            isConnect = a.getBoolean(R.styleable.InputView_isConnect, false);
+            isPassword = a.getBoolean(R.styleable.InputView_isPassword, false);
             strokeWidth = a.getDimensionPixelOffset(R.styleable.InputView_strokeWidth, dp2px(mContext, 1));
             radius = a.getDimensionPixelOffset(R.styleable.InputView_radius, dp2px(mContext, 4));
         } finally {
@@ -96,13 +100,8 @@ public class InputView extends View {
         }
 
         textArray = new String[maxLength];
-        if (backgroundDrawable == null) {
-            backgroundDrawable = new ColorDrawable(Color.parseColor("#00000000"));
-        }
-        if (backgroundSelectedDrawable == null) {
-            backgroundSelectedDrawable = new ColorDrawable(Color.parseColor("#00000000"));
-        }
 
+        //对画text的画笔进行设置
         textPaint.density = getResources().getDisplayMetrics().density;
         textPaint.setFakeBoldText(false);
         textPaint.setTextSkewX(0);
@@ -122,7 +121,7 @@ public class InputView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
+        //给控件宽高在wrap_content时给一个固定值
         int width = getMeasuredWidth();
         int height = getMeasuredHeight();
         if (getLayoutParams().height == WRAP_CONTENT) {
@@ -142,19 +141,23 @@ public class InputView extends View {
         //大框的宽度,高度和控件一样
         boxWidth = width / maxLength;
         //获取宽高最小的一边调整,使宽度小于等于高度
+        //min 最小一边的长度
         int min = Math.min(boxWidth, height);
+        //dw 调整值
         int dw = (boxWidth - min) / 2;
-        int bgSize = min - boxMargin * 2;//背景最小一边的大小
+        //放字体的框最小一边的大小
+        int bgSize = min - boxMargin * 2;
         if (bgSize <= 0) {
             return;
         }
         float textSize = bgSize * 0.8f;
         textPaint.setTextSize(textSize);
         Paint.FontMetricsInt fontMetrics = textPaint.getFontMetricsInt();
-
+        //字的基线
         int baseline = (height - fontMetrics.bottom - fontMetrics.top) / 2;
 
-        if (isConnect) {
+        //如果背景不是用图就用画线的模式
+        if (backgroundDrawable == null || backgroundSelectedDrawable == null) {
             if (paint == null) {
                 paint = new Paint(Paint.ANTI_ALIAS_FLAG);
                 paint.setStyle(Paint.Style.STROKE);
@@ -163,6 +166,7 @@ public class InputView extends View {
                     paint.setColor(lineColor.getDefaultColor());
                 }
                 paint.setStrokeJoin(Paint.Join.ROUND);
+
             }
             if (rectF == null) {
                 rectF = new RectF(strokeWidth / 2, strokeWidth / 2,
@@ -170,23 +174,29 @@ public class InputView extends View {
             }
 
             canvas.drawRoundRect(rectF, radius, radius, paint);
+
             for (int i = 0; i < maxLength; i++) {
+                //中间一条条的分割线
                 int bright = (i + 1) * boxWidth;
-                if (i < maxLength - 1) {//最后一条线不用画
-                    canvas.drawLine(bright, 0, bright, height, paint);
+                if (i < maxLength - 1) {
+                    //最后一条分割线不用画
+                    canvas.drawLine(bright, rectF.top, bright, rectF.bottom, paint);
                 }
                 if (!TextUtils.isEmpty(textArray[i])) {
-                    canvas.drawText(textArray[i], bright - boxWidth / 2, baseline, textPaint);
+                    //画字
+                    canvas.drawText(isPassword ? DOT : textArray[i], bright - boxWidth / 2, baseline, textPaint);
                 }
 
                 if (i == cursorPosition && showcursor()) {
+                    //画光标
                     if (TextUtils.isEmpty(textArray[i])) {
-                        canvas.drawLine(bright - boxWidth / 2, height / 2 - height / 4,
-                                bright - boxWidth / 2, height / 2 + height / 4, textPaint);
+                        canvas.drawLine(bright - boxWidth / 2, height / 4,
+                                bright - boxWidth / 2, height * 3 / 4, textPaint);
                     } else {
-                        canvas.drawLine(bright - boxWidth / 2 + textSize / 2, height / 2 - height / 4,
-                                bright - boxWidth / 2 + textSize / 2, height / 2 + height / 4, textPaint);
+                        canvas.drawLine(bright - boxWidth / 2 + min * 0.45f, height / 4,
+                                bright - boxWidth / 2 + min * 0.45f, height * 3 / 4, textPaint);
                     }
+
                 }
             }
         } else {
@@ -200,7 +210,7 @@ public class InputView extends View {
                     backgroundDrawable.draw(canvas);
                 }
                 if (!TextUtils.isEmpty(textArray[i])) {
-                    canvas.drawText(textArray[i], box.centerX(), baseline, textPaint);
+                    canvas.drawText(isPassword ? DOT : textArray[i], box.centerX(), baseline, textPaint);
                 }
             }
         }
@@ -262,14 +272,14 @@ public class InputView extends View {
                 }
             }
         }
-        invalidate();
+        postInvalidate();
     }
 
     public void setMaxLength(int maxLength) {
         this.maxLength = maxLength;
         textArray = new String[maxLength];
         cursorPosition = 0;
-        invalidate();
+        postInvalidate();
 
     }
 
@@ -277,7 +287,7 @@ public class InputView extends View {
         mFilter = filter;
         textArray = new String[maxLength];
         cursorPosition = 0;
-        invalidate();
+        postInvalidate();
     }
 
     public void setText(CharSequence text) {
@@ -296,7 +306,7 @@ public class InputView extends View {
             }
         }
         cursorPosition = text.length();
-        invalidate();
+        postInvalidate();
     }
 
     public String getText() {
@@ -322,7 +332,7 @@ public class InputView extends View {
             if (event.getAction() == MotionEvent.ACTION_UP) {
                 float x = event.getX();
                 cursorPosition = (int) x / boxWidth;
-                invalidate();
+                postInvalidate();
                 showSoftInput();
             }
         }
