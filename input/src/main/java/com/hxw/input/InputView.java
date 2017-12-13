@@ -105,7 +105,7 @@ public class InputView extends View {
         textPaint.density = getResources().getDisplayMetrics().density;
         textPaint.setFakeBoldText(false);
         textPaint.setTextSkewX(0);
-        textPaint.setStrokeWidth(dp2px(mContext, 2));
+        textPaint.setStrokeWidth(dp2px(mContext, 1));
         if (textColor != null) {
             textPaint.setColor(textColor.getColorForState(getDrawableState(), 0));
         }
