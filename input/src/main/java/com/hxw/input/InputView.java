@@ -263,13 +263,13 @@ public class InputView extends View {
 
         } else {
             //减少了一个字符
-            if (cursorPosition > 0) {
-                if (cursorPosition == maxLength || TextUtils.isEmpty(textArray[cursorPosition])) {
-                    textArray[cursorPosition - 1] = null;
-                    cursorPosition--;
-                } else {
-                    textArray[cursorPosition] = null;
-                }
+            if (cursorPosition == 0) {
+                textArray[cursorPosition] = null;
+            } else if (cursorPosition == maxLength || TextUtils.isEmpty(textArray[cursorPosition])) {
+                textArray[cursorPosition - 1] = null;
+                cursorPosition--;
+            } else {
+                textArray[cursorPosition] = null;
             }
         }
         postInvalidate();
