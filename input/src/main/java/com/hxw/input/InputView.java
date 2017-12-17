@@ -189,7 +189,7 @@ public class InputView extends View {
                     canvas.drawText(isPassword ? DOT : textArray[i], centerX, baseline, textPaint);
                 }
 
-                if (i == cursorPosition && showcursor()) {
+                if (i == cursorPosition && showCursor()) {
                     //画光标
                     if (TextUtils.isEmpty(textArray[i])) {
                         canvas.drawLine(centerX, height / 4,
@@ -204,7 +204,7 @@ public class InputView extends View {
         } else {
             for (int i = 0; i < maxLength; i++) {
                 Rect box = getBoxRect(boxWidth, height, dw, i);
-                if (i == cursorPosition && showcursor()) {
+                if (i == cursorPosition && showCursor()) {
                     backgroundSelectedDrawable.setBounds(box);
                     backgroundSelectedDrawable.draw(canvas);
                 } else {
@@ -399,7 +399,7 @@ public class InputView extends View {
     /**
      * @return true 需要画 false 不需要画
      */
-    private boolean showcursor() {
+    private boolean showCursor() {
         return isFocused() && onCheckIsTextEditor() && isEnabled();
     }
 
