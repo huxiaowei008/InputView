@@ -5,12 +5,12 @@
 类似车牌或者密码输入框的输入控件，想看效果图？
 >[点击此处](http://www.jianshu.com/p/6155cf8ae080)
 
-##下载
+## 下载
 ```gradle
 compile 'com.hxw.input:input:1.0.3'
 ```
 
-##使用
+## 使用
 在布局中
 ```xml
     <com.hxw.input.InputView
@@ -37,7 +37,7 @@ compile 'com.hxw.input:input:1.0.3'
 | radius | 画线模式下四角的弧度 |
 | input | 设置允许输入哪些字符，和textView的digits一样用法 |
 
-##License
+## License
 ```
 Copyright huxiaowei008
 
