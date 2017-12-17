@@ -1,12 +1,15 @@
 # InputView
 [![bintray](https://api.bintray.com/packages/huxiaowei008/maven/InputView/images/download.svg) ](https://bintray.com/huxiaowei008/maven/InputView/_latestVersion)
 [![License](http://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square) ](http://www.apache.org/licenses/LICENSE-2.0)
+
 类似车牌或者密码输入框的输入控件，想看效果图？
 >[点击此处](http://www.jianshu.com/p/6155cf8ae080)
+
 ##下载
 ```gradle
 compile 'com.hxw.input:input:1.0.3'
 ```
+
 ##使用
 在布局中
 ```xml
@@ -33,6 +36,7 @@ compile 'com.hxw.input:input:1.0.3'
 | lineColor | 画线模式下线的颜色 |
 | radius | 画线模式下四角的弧度 |
 | input | 设置允许输入哪些字符，和textView的digits一样用法 |
+
 ##License
 ```
 Copyright huxiaowei008
