@@ -177,24 +177,26 @@ public class InputView extends View {
 
             for (int i = 0; i < maxLength; i++) {
                 //中间一条条的分割线
-                int bright = (i + 1) * boxWidth;
+                int right = (i + 1) * boxWidth;
+                int left = i * boxWidth;
+                int centerX = (left + right) >> 1;
                 if (i < maxLength - 1) {
                     //最后一条分割线不用画
-                    canvas.drawLine(bright, rectF.top, bright, rectF.bottom, paint);
+                    canvas.drawLine(right, rectF.top, right, rectF.bottom, paint);
                 }
                 if (!TextUtils.isEmpty(textArray[i])) {
                     //画字
-                    canvas.drawText(isPassword ? DOT : textArray[i], bright - boxWidth / 2, baseline, textPaint);
+                    canvas.drawText(isPassword ? DOT : textArray[i], centerX, baseline, textPaint);
                 }
 
                 if (i == cursorPosition && showcursor()) {
                     //画光标
                     if (TextUtils.isEmpty(textArray[i])) {
-                        canvas.drawLine(bright - boxWidth / 2, height / 4,
-                                bright - boxWidth / 2, height * 3 / 4, textPaint);
+                        canvas.drawLine(centerX, height / 4,
+                                centerX, height * 3 / 4, textPaint);
                     } else {
-                        canvas.drawLine(bright - boxWidth / 2 + min * 0.45f, height / 4,
-                                bright - boxWidth / 2 + min * 0.45f, height * 3 / 4, textPaint);
+                        canvas.drawLine(centerX + min * 0.45f, height / 4,
+                                centerX + min * 0.45f, height * 3 / 4, textPaint);
                     }
 
                 }
