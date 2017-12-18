@@ -43,7 +43,6 @@ public class InputView extends View {
     private int maxLength;
     //字符方块的margin
     private int boxMargin;
-
     private TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     //用于画线的画笔
     private Paint paint;
@@ -53,8 +52,8 @@ public class InputView extends View {
     private int strokeWidth;
     //圆角矩形的圆角度
     private int radius;
-
-
+    //是否显示光标
+    private boolean isShowCursor;
     private Drawable backgroundDrawable;
     private Drawable backgroundSelectedDrawable;
     private boolean isPassword;
@@ -93,6 +92,7 @@ public class InputView extends View {
             maxLength = a.getInt(R.styleable.InputView_maxLength, 4);
             boxMargin = a.getDimensionPixelOffset(R.styleable.InputView_boxMargin, dp2px(mContext, 4));
             isPassword = a.getBoolean(R.styleable.InputView_isPassword, false);
+            isShowCursor = a.getBoolean(R.styleable.InputView_isShowCursor, true);
             strokeWidth = a.getDimensionPixelOffset(R.styleable.InputView_strokeWidth, dp2px(mContext, 1));
             radius = a.getDimensionPixelOffset(R.styleable.InputView_radius, dp2px(mContext, 4));
         } finally {
@@ -225,7 +225,7 @@ public class InputView extends View {
      * @param boxHeight 大框的高度
      * @param dw        调整数值,使宽度小于等于高度
      * @param i         框的编号
-     * @return
+     * @return 背景框的范围
      */
     private Rect getBoxRect(int boxWidth, int boxHeight, int dw, int i) {
         //具体的背景框上下左右
@@ -330,18 +330,21 @@ public class InputView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean result = super.onTouchEvent(event);
-        if (onCheckIsTextEditor()) {
-            if (event.getAction() == MotionEvent.ACTION_UP) {
+
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            if (isShowCursor) {
                 float x = event.getX();
                 cursorPosition = (int) x / boxWidth;
                 postInvalidate();
-                showSoftInput();
             }
+            showSoftInput();
         }
         return result;
     }
 
-    //让这个View变成文本可编辑的状态
+    /**
+     * 让这个View变成文本可编辑的状态
+     */
     @Override
     public boolean onCheckIsTextEditor() {
         return true;
@@ -400,7 +403,7 @@ public class InputView extends View {
      * @return true 需要画 false 不需要画
      */
     private boolean showCursor() {
-        return isFocused() && onCheckIsTextEditor() && isEnabled();
+        return isShowCursor && isFocused() && onCheckIsTextEditor() && isEnabled();
     }
 
 

@@ -32,6 +32,7 @@ compile 'com.hxw.input:input:1.0.3'
 | maxLength | 最大字数 |
 | boxMargin | 文字背景框的margin |
 | isPassword | 是否是密码，是的话不会显示具体字符 |
+| isShowCursor| 是否显示光标，不显示的话就不会移动光标任意输入删除 |
 | strokeWidth | 画线模式下线的宽度 |
 | lineColor | 画线模式下线的颜色 |
 | radius | 画线模式下四角的弧度 |

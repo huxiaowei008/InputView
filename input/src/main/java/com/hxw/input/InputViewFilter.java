@@ -34,7 +34,7 @@ public class InputViewFilter implements InputFilter {
      * @param dest   带光标的字符串
      * @param dstart 光标的起始位置
      * @param dend   光标的结束位置
-     * @return
+     * @return 完成过滤后的数据
      */
     @Override
     public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {

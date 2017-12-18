@@ -11,6 +11,7 @@ public class MainActivity extends AppCompatActivity {
 
     InputView inputView1;
     InputView inputView2;
+    InputView inputView3;
 
     Button btn1;
     Button btn2;
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
         inputView1 = findViewById(R.id.input1);
         inputView2 = findViewById(R.id.input2);
+        inputView3 = findViewById(R.id.input3);
 
         btn1 = findViewById(R.id.btn1);
         btn2 = findViewById(R.id.btn2);
@@ -31,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 inputView1.setMaxLength(8);
                 inputView2.setMaxLength(8);
+                inputView3.setMaxLength(8);
             }
         });
 
@@ -39,7 +42,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 inputView1.setMaxLength(6);
                 inputView2.setMaxLength(6);
+                inputView3.setMaxLength(6);
             }
         });
+
+        inputView3.setEnabled(false);
     }
 }

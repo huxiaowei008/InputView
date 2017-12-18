@@ -2,11 +2,10 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 
 
-def vName = "1.0.3"
+def vName = "1.0.4"
 def projectName = 'InputView'
 def gitUrl = 'https://github.com/huxiaowei008/InputView.git'   // Git仓库的url
 def siteUrl = 'https://github.com/huxiaowei008/InputView'   // 项目的主页
-
 
 //项目引用的版本号，比如compile 'com.yanzhenjie:andserver:1.0.1'中的1.0.1就是这里配置的。
 version = vName//指定版本号
@@ -22,7 +21,7 @@ bintray {
     //读取 local.properties 文件里面的 bintray.user
     user = properties.getProperty("bintray.user")
     //读取 local.properties 文件里面的 bintray.apikey
-    key =properties.getProperty("bintray.apikey")
+    key = properties.getProperty("bintray.apikey")
 
     pkg {
         userOrg = 'huxiaowei008'//发布到JCenter的组织
@@ -98,16 +97,18 @@ artifacts {
     archives javadocJar
     archives sourcesJar
 }
+
 //把javadoc的编码方式变为UTF-8
-javadoc {
-    options{
-        encoding "UTF-8"
-        charSet 'UTF-8'
-        author true
-        version true
-        links "http://docs.oracle.com/javase/7/docs/api"
-    }
-}
+//javadoc {
+//    options{
+//        encoding "UTF-8"
+//        charSet 'UTF-8'
+//        author true
+//        version true
+//        links "http://docs.oracle.com/javase/7/docs/api"
+//    }
+//}
+
 
 
 

@@ -38,13 +38,29 @@
         app:textBackgroundSelected="@drawable/ic_launcher_background"
         app:textColor="#ffffff" />
 
+    <com.hxw.input.InputView
+        android:id="@+id/input3"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="#00ffffff"
+        app:isShowCursor="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/input2"
+        app:lineColor="@color/colorAccent"
+        app:strokeWidth="3dp"
+        app:textColor="@color/colorPrimary" />
+
     <Button
         android:id="@+id/btn1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="改变输入限制为8"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/input2" />
+        app:layout_constraintTop_toBottomOf="@+id/input3" />
 
     <Button
         android:id="@+id/btn2"
@@ -52,6 +68,6 @@
         android:layout_height="wrap_content"
         android:text="改变输入限制为6"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/input2" />
+        app:layout_constraintTop_toBottomOf="@+id/input3" />
 
 </android.support.constraint.ConstraintLayout>

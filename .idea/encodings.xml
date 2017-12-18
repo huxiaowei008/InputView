@@ -2,6 +2,9 @@
 <project version="4">
   <component name="Encoding" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="UTF-8">
     <file url="file://$PROJECT_DIR$/input/bintray.gradle" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/input/src/main/java/com/hxw/input/EasyInputConnection.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/input/src/main/java/com/hxw/input/InputView.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/input/src/main/java/com/hxw/input/InputViewFilter.java" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>
