@@ -7,7 +7,7 @@
 
 ## 下载
 ```gradle
-compile 'com.hxw.input:input:1.0.3'
+compile 'com.hxw.input:input:1.0.4'
 ```
 
 ## 使用
