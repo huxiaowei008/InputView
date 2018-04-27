@@ -321,7 +321,7 @@ public class InputView extends View {
         return builder.toString();
     }
 
-    public static int dp2px(Context context, float dp) {
+    private static int dp2px(Context context, float dp) {
         final float density = context.getResources().getDisplayMetrics().density;
         return (int) (dp * density + 0.5);
     }
