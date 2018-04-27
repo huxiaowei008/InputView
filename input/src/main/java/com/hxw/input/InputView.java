@@ -24,10 +24,8 @@ import android.view.inputmethod.InputMethodManager;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 /**
- * 类似密码框输入,适用于字数少的,行数为1,字体大小适配控件大小
- *
  * @author hxw
- * @date 2017/11/7
+ * 类似密码框输入,适用于字数少的,行数为1,字体大小适配控件大小
  */
 
 public class InputView extends View {
@@ -118,19 +116,184 @@ public class InputView extends View {
         imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 
+    private static int dp2px(Context context, float dp) {
+        final float density = context.getResources().getDisplayMetrics().density;
+        return (int) (dp * density + 0.5);
+    }
+
+    /**
+     * 获取背景的框大小
+     *
+     * @param boxWidth  大框的宽度
+     * @param boxHeight 大框的高度
+     * @param dw        调整数值,使宽度小于等于高度
+     * @param i         框的编号
+     * @return 背景框的范围
+     */
+    private Rect getBoxRect(int boxWidth, int boxHeight, int dw, int i) {
+        //具体的背景框上下左右
+        int left = boxWidth * i + boxMargin;
+        int right = boxWidth * (i + 1) - boxMargin;
+        int top = boxMargin;
+        int bottom = boxHeight - boxMargin;
+        left += dw;
+        right -= dw;
+        return new Rect(left, top, right, bottom);
+    }
+
+    /**
+     * 发送字符变换
+     *
+     * @param text  变换的字符
+     * @param isAdd true时增加一个字符,false时减少一个字符
+     */
+    void sendOnTextChanged(CharSequence text, boolean isAdd) {
+        CharSequence out;
+        if (textArray == null) {
+            return;
+        }
+        if (isAdd) {
+            //增加了一个字符
+            if (mFilter != null) {
+                out = mFilter.filter(text, 0, text.length(), EMPTY_SPANNED, 0, 0);
+            } else {
+                out = text;
+            }
+            if (cursorPosition < maxLength && !TextUtils.isEmpty(out)) {
+                //增加了一个字符
+                textArray[cursorPosition] = out.toString().substring(0, 1);
+                cursorPosition++;
+            }
+
+        } else {
+            //减少了一个字符
+            if (cursorPosition == 0) {
+                textArray[cursorPosition] = null;
+            } else if (cursorPosition == maxLength || TextUtils.isEmpty(textArray[cursorPosition])) {
+                textArray[cursorPosition - 1] = null;
+                cursorPosition--;
+            } else {
+                textArray[cursorPosition] = null;
+            }
+        }
+        postInvalidate();
+    }
+
+    public void setMaxLength(int maxLength) {
+        this.maxLength = maxLength;
+        textArray = new String[maxLength];
+        cursorPosition = 0;
+        postInvalidate();
+
+    }
+
+    public void setFilter(InputFilter filter) {
+        mFilter = filter;
+        textArray = new String[maxLength];
+        cursorPosition = 0;
+        postInvalidate();
+    }
+
+    public String getText() {
+        StringBuilder builder = new StringBuilder();
+        for (String str : textArray) {
+            if (str != null) {
+                builder.append(str);
+            }
+        }
+        return builder.toString();
+    }
+
+    public void setText(CharSequence text) {
+        CharSequence out;
+        if (mFilter != null) {
+            out = mFilter.filter(text, 0, text.length(), EMPTY_SPANNED, 0, 0);
+        } else {
+            out = text;
+        }
+        if (TextUtils.isEmpty(out)) {
+            return;
+        }
+        for (int i = 0; i < maxLength; i++) {
+            if (i < out.length()) {
+                textArray[i] = out.toString().substring(i, i + 1);
+            }
+        }
+        cursorPosition = text.length();
+        postInvalidate();
+    }
+
+    private void showSoftInput() {
+        if (imm != null) {
+            imm.viewClicked(this);
+            imm.showSoftInput(this, 0);
+        }
+    }
+
+    private void hideSoftInput() {
+        if (imm != null && imm.isActive(this)) {
+            imm.hideSoftInputFromWindow(getWindowToken(), 0);
+        }
+    }
+
+    private void restartInput() {
+        if (imm != null) {
+            imm.restartInput(this);
+        }
+    }
+
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        //给控件宽高在wrap_content时给一个固定值
-        int width = getMeasuredWidth();
-        int height = getMeasuredHeight();
-        if (getLayoutParams().height == WRAP_CONTENT) {
-            height = Math.min(getMeasuredHeight(), dp2px(mContext, 24));
+    public void setEnabled(boolean enabled) {
+        if (enabled == isEnabled()) {
+            return;
         }
-        if (getLayoutParams().width == WRAP_CONTENT) {
-            width = Math.min(getMeasuredWidth(), dp2px(mContext, 192));
+        if (!enabled) {
+            hideSoftInput();
         }
-        setMeasuredDimension(width, height);
+        super.setEnabled(enabled);
+
+        if (enabled) {
+            restartInput();
+        }
+    }
+
+    /**
+     * 让这个View变成文本可编辑的状态
+     */
+    @Override
+    public boolean onCheckIsTextEditor() {
+        return true;
+    }
+
+    @Override
+    public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
+
+        if (onCheckIsTextEditor() && isEnabled()) {
+            if (focusSearch(FOCUS_DOWN) != null) {
+                outAttrs.imeOptions |= EditorInfo.IME_FLAG_NAVIGATE_NEXT;
+            }
+            if (focusSearch(FOCUS_UP) != null) {
+                outAttrs.imeOptions |= EditorInfo.IME_FLAG_NAVIGATE_PREVIOUS;
+            }
+            return new EasyInputConnection(this);
+        }
+        return null;
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        boolean result = super.onTouchEvent(event);
+
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            if (isShowCursor) {
+                float x = event.getX();
+                cursorPosition = (int) x / boxWidth;
+                postInvalidate();
+            }
+            showSoftInput();
+        }
+        return result;
     }
 
     @Override
@@ -218,185 +381,19 @@ public class InputView extends View {
         }
     }
 
-    /**
-     * 获取背景的框大小
-     *
-     * @param boxWidth  大框的宽度
-     * @param boxHeight 大框的高度
-     * @param dw        调整数值,使宽度小于等于高度
-     * @param i         框的编号
-     * @return 背景框的范围
-     */
-    private Rect getBoxRect(int boxWidth, int boxHeight, int dw, int i) {
-        //具体的背景框上下左右
-        int left = boxWidth * i + boxMargin;
-        int right = boxWidth * (i + 1) - boxMargin;
-        int top = boxMargin;
-        int bottom = boxHeight - boxMargin;
-        left += dw;
-        right -= dw;
-        return new Rect(left, top, right, bottom);
-    }
-
-
-    /**
-     * 发送字符变换
-     *
-     * @param text  变换的字符
-     * @param isAdd true时增加一个字符,false时减少一个字符
-     */
-    void sendOnTextChanged(CharSequence text, boolean isAdd) {
-        CharSequence out;
-        if (textArray == null) {
-            return;
-        }
-        if (isAdd) {
-            //增加了一个字符
-            if (mFilter != null) {
-                out = mFilter.filter(text, 0, text.length(), EMPTY_SPANNED, 0, 0);
-            } else {
-                out = text;
-            }
-            if (cursorPosition < maxLength && !TextUtils.isEmpty(out)) {
-                //增加了一个字符
-                textArray[cursorPosition] = out.toString().substring(0, 1);
-                cursorPosition++;
-            }
-
-        } else {
-            //减少了一个字符
-            if (cursorPosition == 0) {
-                textArray[cursorPosition] = null;
-            } else if (cursorPosition == maxLength || TextUtils.isEmpty(textArray[cursorPosition])) {
-                textArray[cursorPosition - 1] = null;
-                cursorPosition--;
-            } else {
-                textArray[cursorPosition] = null;
-            }
-        }
-        postInvalidate();
-    }
-
-    public void setMaxLength(int maxLength) {
-        this.maxLength = maxLength;
-        textArray = new String[maxLength];
-        cursorPosition = 0;
-        postInvalidate();
-
-    }
-
-    public void setFilter(InputFilter filter) {
-        mFilter = filter;
-        textArray = new String[maxLength];
-        cursorPosition = 0;
-        postInvalidate();
-    }
-
-    public void setText(CharSequence text) {
-        CharSequence out;
-        if (mFilter != null) {
-            out = mFilter.filter(text, 0, text.length(), EMPTY_SPANNED, 0, 0);
-        } else {
-            out = text;
-        }
-        if (TextUtils.isEmpty(out)) {
-            return;
-        }
-        for (int i = 0; i < maxLength; i++) {
-            if (i < out.length()) {
-                textArray[i] = out.toString().substring(i, i + 1);
-            }
-        }
-        cursorPosition = text.length();
-        postInvalidate();
-    }
-
-    public String getText() {
-        StringBuilder builder = new StringBuilder();
-        for (String str : textArray) {
-            if (str != null) {
-                builder.append(str);
-            }
-        }
-        return builder.toString();
-    }
-
-    private static int dp2px(Context context, float dp) {
-        final float density = context.getResources().getDisplayMetrics().density;
-        return (int) (dp * density + 0.5);
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        boolean result = super.onTouchEvent(event);
-
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            if (isShowCursor) {
-                float x = event.getX();
-                cursorPosition = (int) x / boxWidth;
-                postInvalidate();
-            }
-            showSoftInput();
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        //给控件宽高在wrap_content时给一个固定值
+        int width = getMeasuredWidth();
+        int height = getMeasuredHeight();
+        if (getLayoutParams().height == WRAP_CONTENT) {
+            height = Math.min(getMeasuredHeight(), dp2px(mContext, 24));
         }
-        return result;
-    }
-
-    /**
-     * 让这个View变成文本可编辑的状态
-     */
-    @Override
-    public boolean onCheckIsTextEditor() {
-        return true;
-    }
-
-    @Override
-    public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
-
-        if (onCheckIsTextEditor() && isEnabled()) {
-            if (focusSearch(FOCUS_DOWN) != null) {
-                outAttrs.imeOptions |= EditorInfo.IME_FLAG_NAVIGATE_NEXT;
-            }
-            if (focusSearch(FOCUS_UP) != null) {
-                outAttrs.imeOptions |= EditorInfo.IME_FLAG_NAVIGATE_PREVIOUS;
-            }
-            return new EasyInputConnection(this);
+        if (getLayoutParams().width == WRAP_CONTENT) {
+            width = Math.min(getMeasuredWidth(), dp2px(mContext, 192));
         }
-        return null;
-    }
-
-    private void showSoftInput() {
-        if (imm != null) {
-            imm.viewClicked(this);
-            imm.showSoftInput(this, 0);
-        }
-    }
-
-    private void hideSoftInput() {
-        if (imm != null && imm.isActive(this)) {
-            imm.hideSoftInputFromWindow(getWindowToken(), 0);
-        }
-    }
-
-    private void restartInput() {
-        if (imm != null) {
-            imm.restartInput(this);
-        }
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        if (enabled == isEnabled()) {
-            return;
-        }
-        if (!enabled) {
-            hideSoftInput();
-        }
-        super.setEnabled(enabled);
-
-        if (enabled) {
-            restartInput();
-        }
+        setMeasuredDimension(width, height);
     }
 
     /**
