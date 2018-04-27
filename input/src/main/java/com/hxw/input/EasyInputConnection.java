@@ -20,11 +20,22 @@ public class EasyInputConnection extends BaseInputConnection {
 
     /**
      * 文本输入
+     *
+     * @param text              文字
+     * @param newCursorPosition 新的当前位置
      */
     @Override
     public boolean commitText(CharSequence text, int newCursorPosition) {
         mInputView.sendOnTextChanged(text, true);
         return super.commitText(text, newCursorPosition);
+    }
+
+    /**
+     * 这个方法基本上会出现在切换输入法类型，点击回车（完成、搜索、发送、下一步）点击输入法右上角隐藏按钮会触发。
+     */
+    @Override
+    public boolean finishComposingText() {
+        return super.finishComposingText();
     }
 
     /**
@@ -40,13 +51,5 @@ public class EasyInputConnection extends BaseInputConnection {
             }
         }
         return super.sendKeyEvent(event);
-    }
-
-    /**
-     * 这个方法基本上会出现在切换输入法类型，点击回车（完成、搜索、发送、下一步）点击输入法右上角隐藏按钮会触发。
-     */
-    @Override
-    public boolean finishComposingText() {
-        return super.finishComposingText();
     }
 }

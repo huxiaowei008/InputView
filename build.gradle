@@ -29,6 +29,9 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 ext {
-    versionCode = 5
-    versionName = "1.0.5"
+    compileSdkVersion = 27
+    minSdkVersion = 14
+    targetSdkVersion= 27
+    versionCode = 6
+    versionName = "1.0.6"
 }
