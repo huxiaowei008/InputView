@@ -1,5 +1,5 @@
 # InputView
-[![bintray](https://api.bintray.com/packages/huxiaowei008/maven/InputView/images/download.svg) ](https://bintray.com/huxiaowei008/maven/InputView/_latestVersion)
+[![Download](https://api.bintray.com/packages/huxiaowei008/maven/InputView/images/download.svg) ](https://bintray.com/huxiaowei008/maven/InputView/_latestVersion)
 [![License](http://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square) ](http://www.apache.org/licenses/LICENSE-2.0)
 
 类似车牌或者密码输入框的输入控件，想看效果图？
@@ -7,7 +7,7 @@
 
 ## 下载
 ```gradle
-compile 'com.hxw.input:input:1.0.4'
+compile 'com.hxw:input:<latestVersion>'
 ```
 
 ## 使用

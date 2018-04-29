@@ -7,10 +7,8 @@ import android.text.Spanned;
 
 
 /**
- * 过滤不在范围内的字符
- *
  * @author hxw
- * @date 2017/12/8
+ * 过滤不在范围内的字符
  */
 
 public class InputViewFilter implements InputFilter {
@@ -20,7 +18,7 @@ public class InputViewFilter implements InputFilter {
      */
     private char[] mAccepted;
 
-    public InputViewFilter(@NonNull String accepted) {
+    InputViewFilter(@NonNull String accepted) {
         mAccepted = new char[accepted.length()];
         accepted.getChars(0, accepted.length(), mAccepted, 0);
     }
