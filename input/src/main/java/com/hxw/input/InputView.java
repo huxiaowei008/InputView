@@ -64,6 +64,8 @@ public class InputView extends View {
     //过滤器
     private InputFilter mFilter;
 
+    private OnTextChangeListener listener;
+
     public InputView(Context context) {
         this(context, null);
     }
@@ -176,7 +178,12 @@ public class InputView extends View {
                 textArray[cursorPosition] = null;
             }
         }
+
         postInvalidate();
+
+        if (listener != null) {
+            listener.textChange(getText());
+        }
     }
 
     public void setMaxLength(int maxLength) {
@@ -404,4 +411,7 @@ public class InputView extends View {
     }
 
 
+    public void setOnTextChangeListener(OnTextChangeListener listener) {
+        this.listener = listener;
+    }
 }
